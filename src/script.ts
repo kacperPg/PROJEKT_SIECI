@@ -1,13 +1,17 @@
 import { testData } from "./test-data.js";
 
 let currentQuestionIndex = 0;
-let answers: number[] = Array(testData.questions.length).fill(-1); // Defaulting to -1 for unanswered questions
+let answers: number[] = [];
+let randomizedQuestions: { question: string; options: string[]; correct: number }[] = [];
 let timer: number = 0;
 let interval: any;
+let questionTimes: number[] = [];
+let lastQuestionTimestamp: number = 0;
 
 const introductionSection = document.getElementById("introduction")!;
 const testSection = document.getElementById("test")!;
 const summarySection = document.getElementById("summary")!;
+const questionNumberElement = document.getElementById("questionNumber")!;  
 const questionElement = document.getElementById("question")!;
 const answersElement = document.getElementById("answers")!;
 const timerElement = document.getElementById("timeElapsed")!;
@@ -15,22 +19,38 @@ const prevButton = document.getElementById("prevQuestion") as HTMLButtonElement;
 const nextButton = document.getElementById("nextQuestion") as HTMLButtonElement;
 const finishButton = document.getElementById("finishTest") as HTMLButtonElement;
 const scoreElement = document.getElementById("score")!;
+const summaryDetails = document.createElement("div");
 
 function startTest() {
-  introductionSection.classList.add("hidden");
+  randomizedQuestions = [...testData.questions].sort(() => Math.random() - 0.5);
+  answers = Array(randomizedQuestions.length).fill(-1);
+  questionTimes = Array(randomizedQuestions.length).fill(0);
+  const startButton = document.getElementById("startTest");
+  if (startButton) {
+    startButton.remove();  
+  }
+  introductionSection.classList.remove("hidden"); 
   testSection.classList.remove("hidden");
+  lastQuestionTimestamp = Date.now();
   interval = setInterval(() => {
     timer++;
-    timerElement.textContent = timer.toString();
+    timerElement.textContent = `${timer} sekund`;
   }, 1000);
   renderQuestion();
 }
 
 function renderQuestion() {
-  const questionData = testData.questions[currentQuestionIndex];
+  const now = Date.now();
+  if (lastQuestionTimestamp > 0) {
+    questionTimes[currentQuestionIndex] += Math.floor((now - lastQuestionTimestamp) / 1000);
+  }
+  lastQuestionTimestamp = now;
+
+  const questionData = randomizedQuestions[currentQuestionIndex];
+  questionNumberElement.textContent = `Pytanie ${currentQuestionIndex + 1}/${randomizedQuestions.length}`;  
   questionElement.textContent = questionData.question;
   answersElement.innerHTML = "";
-  questionData.options.forEach((option, index) => {
+  questionData.options.forEach((option: string, index: number) => {
     const button = document.createElement("button");
     button.textContent = option;
     button.onclick = () => {
@@ -46,7 +66,7 @@ function renderQuestion() {
 
 function validateButtons() {
   prevButton.disabled = currentQuestionIndex === 0;
-  nextButton.disabled = currentQuestionIndex === testData.questions.length - 1 || answers[currentQuestionIndex] === -1;
+  nextButton.disabled = currentQuestionIndex === randomizedQuestions.length - 1;
   finishButton.classList.toggle("hidden", answers.includes(-1));
 }
 
@@ -58,11 +78,36 @@ function moveToQuestion(step: number) {
 
 function finishTest() {
   clearInterval(interval);
+
+  const now = Date.now();
+  questionTimes[currentQuestionIndex] += Math.floor((now - lastQuestionTimestamp) / 1000);
+
   testSection.classList.add("hidden");
   summarySection.classList.remove("hidden");
 
-  const correctAnswers = answers.filter((ans, idx) => ans === testData.questions[idx].correct).length;
-  scoreElement.textContent = `You scored ${correctAnswers}/${testData.questions.length}.`;
+  const correctAnswers = answers.filter((ans, idx) => ans === randomizedQuestions[idx].correct).length;
+  scoreElement.textContent = `Twój wynik: ${correctAnswers}/${randomizedQuestions.length}.`;
+
+  summaryDetails.innerHTML = "<h3>Podsumowanie odpowiedzi</h3>";
+  randomizedQuestions.forEach((question, idx) => {
+    const userAnswer = answers[idx];
+    const isCorrect = userAnswer === question.correct;
+    const result = document.createElement("p");
+    result.textContent = `${idx + 1}. ${question.question} 
+      - Twoja odpowiedź: ${userAnswer !== -1 ? question.options[userAnswer] : "Brak odpowiedzi"} 
+      - Poprawna odpowiedź: ${question.options[question.correct]} 
+      - ${isCorrect ? "Poprawna" : "Błędna"}
+      - Czas: ${questionTimes[idx]} sekund`;
+    result.style.color = isCorrect ? "green" : "red";
+    summaryDetails.appendChild(result);
+  });
+
+  const totalTime = questionTimes.reduce((acc, time) => acc + time, 0);
+  const totalTimeElement = document.createElement("p");
+  totalTimeElement.textContent = `Łączny czas spędzony na teście: ${totalTime} sekund`;
+  summaryDetails.appendChild(totalTimeElement);
+
+  summarySection.appendChild(summaryDetails);
 }
 
 document.getElementById("startTest")!.onclick = startTest;

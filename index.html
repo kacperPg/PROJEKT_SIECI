@@ -3,34 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Test App</title>
+  <title>Test</title>
   <link rel="stylesheet" href="../style.css">
 </head>
 <body>
   <div id="app">
     <div id="introduction" class="section">
-      <h1>Welcome to the Test</h1>
-      <p>This test consists of multiple questions with four options each. Answer all questions to complete the test.</p>
-      <button id="startTest">Start Test</button>
+      <h1>Witaj w teście</h1>
+      <p>Ten test składa się z wielu pytań z czterema opcjami do wyboru. Odpowiedz na wszystkie pytania, aby ukończyć test</p>
+      <button id="startTest">Rozpocznij test</button>
     </div>
 
     <div id="test" class="section hidden">
       <div id="questionSection">
+        <h3 id="questionNumber"></h3>
         <h2 id="question"></h2>
         <div id="answers"></div>
       </div>
       <div id="navigation">
-        <button id="prevQuestion" disabled>Previous</button>
-        <button id="nextQuestion">Next</button>
-        <button id="finishTest" class="hidden">Finish</button>
+        <button id="prevQuestion" disabled>Poprzednie</button>
+        <button id="nextQuestion">Następne</button>
+        <button id="finishTest" class="hidden">Zakończ</button>
       </div>
-      <p id="timer">Time: <span id="timeElapsed">0</span> seconds</p>
+      <p id="timer">Time: <span id="timeElapsed">0</span> sekund</p>
     </div>
 
     <div id="summary" class="section hidden">
-      <h2>Test Summary</h2>
+      <h2>Podsumowanie testu</h2>
       <p id="score"></p>
-      <button id="restartTest">Restart Test</button>
+      <button id="restartTest">Rozpocznij ponownie</button>
     </div>
   </div>
 
