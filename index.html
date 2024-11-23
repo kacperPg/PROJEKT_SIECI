@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test App</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <div id="app">
+    <div id="introduction" class="section">
+      <h1>Welcome to the Test</h1>
+      <p>This test consists of multiple questions with four options each. Answer all questions to complete the test.</p>
+      <button id="startTest">Start Test</button>
+    </div>
+
+    <div id="test" class="section hidden">
+      <div id="questionSection">
+        <h2 id="question"></h2>
+        <div id="answers"></div>
+      </div>
+      <div id="navigation">
+        <button id="prevQuestion" disabled>Previous</button>
+        <button id="nextQuestion">Next</button>
+        <button id="finishTest" class="hidden">Finish</button>
+      </div>
+      <p id="timer">Time: <span id="timeElapsed">0</span> seconds</p>
+    </div>
+
+    <div id="summary" class="section hidden">
+      <h2>Test Summary</h2>
+      <p id="score"></p>
+      <button id="restartTest">Restart Test</button>
+    </div>
+  </div>
+
+  <script src="dist/script.js" type="module"></script>
+</body>
+</html>
