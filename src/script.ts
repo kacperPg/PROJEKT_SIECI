@@ -50,11 +50,21 @@ function renderQuestion() {
   questionNumberElement.textContent = `Pytanie ${currentQuestionIndex + 1}/${randomizedQuestions.length}`;  
   questionElement.textContent = questionData.question;
   answersElement.innerHTML = "";
+
   questionData.options.forEach((option: string, index: number) => {
     const button = document.createElement("button");
     button.textContent = option;
+    button.classList.add("answerButton");
+
+    if (answers[currentQuestionIndex] === index) {
+        button.classList.add("selected");
+    }
+
     button.onclick = () => {
       answers[currentQuestionIndex] = index;
+      const buttons = answersElement.querySelectorAll(".answerButton");
+      buttons.forEach((btn) => btn.classList.remove("selected"));
+      button.classList.add("selected");
       validateButtons();
     };
     if (answers[currentQuestionIndex] === index) {

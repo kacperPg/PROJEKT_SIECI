@@ -24,7 +24,7 @@ function startTest() {
     questionTimes = Array(randomizedQuestions.length).fill(0);
     const startButton = document.getElementById("startTest");
     if (startButton) {
-        startButton.remove(); // Usunięcie przycisku z DOM
+        startButton.remove();
     }
     introductionSection.classList.remove("hidden");
     testSection.classList.remove("hidden");
@@ -48,8 +48,15 @@ function renderQuestion() {
     questionData.options.forEach((option, index) => {
         const button = document.createElement("button");
         button.textContent = option;
+        button.classList.add("answerButton");
+        if (answers[currentQuestionIndex] === index) {
+            button.classList.add("selected");
+        }
         button.onclick = () => {
             answers[currentQuestionIndex] = index;
+            const buttons = answersElement.querySelectorAll(".answerButton");
+            buttons.forEach((btn) => btn.classList.remove("selected"));
+            button.classList.add("selected");
             validateButtons();
         };
         if (answers[currentQuestionIndex] === index) {
